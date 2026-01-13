@@ -1,2 +1,2 @@
 # smart-sleep-screen-health-analysis
-Conducted data-driven research to analyse the impact of screen exposure on sleep health using Python, TensorFlow, and statistical visualisation techniques.
+This research project investigates the relationship between screen exposure patterns and sleep health using machine learning and data analytics techniques. The study involves preprocessing sleep and screen-time datasets, performing exploratory analysis and applying predictive modelling to identify correlations affecting sleep quality. The project strengthened my understanding of research-oriented machine learning workflows, data interpretation and visual communication of analytical findings.
