@@ -1,0 +1,162 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('/content/Dry_Eye_Dataset (1).csv')
+data.head()
+data.info()
+print(data.columns)
+
+data.isnull()
+data.isnull().sum()
+
+#Gender Distribution
+plt.figure(figsize=(7,5))
+sns.countplot(x=data['Gender'])
+plt.title("Gender Distribution")
+plt.xlabel("Gender")
+plt.ylabel("Count")
+plt.show()
+
+#Age Distribution
+plt.figure(figsize=(7,5))
+plt.hist(data["Age"], bins = 30)
+plt.title("Age Distribution")
+plt.xlabel("Age")
+plt.ylabel("Count")
+plt.show()
+
+#Sleep Duration vs. Sleep Quality
+plt.figure(figsize=(7,5))
+sns.scatterplot(x=data['Sleep duration'], y=data['Sleep quality'],hue=data["Gender"])
+plt.title('Sleep Duration vs. Sleep Quality')
+plt.xlabel('Sleep Duration (hours)')
+plt.ylabel('Sleep Quality')
+plt.show()
+
+#Stress Level vs. Heart Rate
+plt.figure(figsize=(7,5))
+sns.boxplot(x=data["Stress level"], y=data["Heart rate"])
+plt.title('Stress Level vs. Heart Rate')
+plt.xlabel('Stress Level')
+plt.ylabel('Heart Rate (bpm)')
+plt.show
+
+#Dry Eye Disease Distribution
+plt.figure(figsize=(7,5))
+sns.countplot(x=data["Dry Eye Disease"])
+plt.title('Dry Eye Disease Distribution')
+plt.xlabel('Dry Eye Disease (Y/N)')
+plt.ylabel('Count')
+plt.show()
+
+#Correlation Heatmap
+plt.figure(figsize=(7,5))
+sns.heatmap(data.corr(numeric_only=True),annot=True,cmap="coolwarm",fmt=".2f")
+plt.title('Correlation Heatmap of Numerical Features')
+plt.show()
+
+#Physical Activity vs. Heart Rate
+plt.figure(figsize=(7,5))
+sns.scatterplot(x=data['Physical activity'], y=data['Heart rate'], hue=data['Gender'])
+plt.title('Physical Activity vs. Heart Rate')
+plt.xlabel('Physical Activity')
+plt.ylabel('Heart Rate (bpm)')
+plt.show()
+
+#Screen Time vs. Dry Eye Disease
+plt.figure(figsize=(7,5))
+sns.boxplot(x=data['Dry Eye Disease'], y=data['Average screen time'])
+plt.title('Screen Time vs. Dry Eye Disease')
+plt.xlabel('Dry Eye Disease (Y/N)')
+plt.ylabel('Average Screen Time (hours)')
+plt.show()
+
+#Use of Smart Devices Before Bed vs. Dry Eye Disease
+plt.figure(figsize=(5,3))
+sns.countplot(x=data['Smart device before bed'], hue=data['Dry Eye Disease'])
+plt.title('Smart Device Use Before Bed vs. Dry Eye Disease')
+plt.xlabel('Smart Device Use Before Bed (Y/N)')
+plt.ylabel('Count')
+plt.show()
+
+# Blue-Light Filter Usage vs. Dry Eye Disease
+plt.figure(figsize=(7,5))
+sns.boxplot(x=data['Blue-light filter'], y=data['Sleep duration'], hue=data['Dry Eye Disease'])
+plt.title('Blue-Light filter Usage vs. Dry Eye Disease')
+plt.xlabel('Blue-light filter (Y/N)')
+plt.ylabel('Sleep duration (hours)')
+plt.legend(title='Dry Eye Disease')
+plt.show()
+
+
+eye_symptoms = ['Discomfort Eye-strain', 'Redness in eye', 'Itchiness/Irritation in eye']
+
+# Reshape the data for better visualization
+data_melted = data.melt(id_vars=['Dry Eye Disease'], value_vars=eye_symptoms,
+                     var_name='Symptom', value_name='Presence')
+
+# Aggregate counts for stacked bars
+symptom_counts = data_melted.groupby(['Symptom', 'Dry Eye Disease'])['Presence'].count().reset_index()
+
+# Set up figure
+plt.figure(figsize=(8, 6))
+
+# Plot stacked bar chart
+sns.barplot(data=symptom_counts, x='Symptom', y='Presence', hue='Dry Eye Disease', palette='coolwarm')
+
+# Enhance aesthetics
+plt.title('Eye Symptoms vs. Dry Eye Disease', fontsize=14)
+plt.xlabel('Eye Symptoms', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.xticks(rotation=15)
+
+# Add labels on bars
+for container in plt.gca().containers:
+    plt.bar_label(container, fmt='%d', fontsize=10, padding=3)
+
+plt.legend(title='Dry Eye Disease')
+plt.show()
+
+X = data[['Gender', 'Age', 'Sleep duration', 'Sleep quality', 'Stress level','Heart rate', 'Daily steps', 'Physical activity',
+          'Medical issue','Smart device before bed', 'Average screen time', 'Blue-light filter','Discomfort Eye-strain',
+          'Redness in eye','Itchiness/Irritation in eye']]
+Y = data['Dry Eye Disease']
+
+#Split the data
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+print(X_train.dtypes)  # Check data types
+print(X_train.head())  # View first few rows
+
+from sklearn.preprocessing import LabelEncoder
+label_encoder = LabelEncoder()
+X_train['Gender'] = label_encoder.fit_transform(X_train['Gender'])  # Example for a 'Gender' column
+X_test['Gender'] = label_encoder.transform(X_test['Gender'])  # Apply the same transformation to test data
+
+X_train = pd.get_dummies(X_train, drop_first=True)
+X_test = pd.get_dummies(X_test, drop_first=True)
+
+Y_train = label_encoder.fit_transform(Y_train)
+
+from sklearn.linear_model import LogisticRegression
+
+# Define the model
+model = LogisticRegression()
+
+# Train the model
+model.fit(X_train, Y_train)
+
+
+
+
+
+
+
+
+
+  
