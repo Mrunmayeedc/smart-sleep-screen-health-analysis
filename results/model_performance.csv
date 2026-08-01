@@ -1,5 +1,0 @@
-Dataset,Model,Accuracy
-Adult,Random Forest,1.0
-Adult,Neural Network,1.0
-Kids,Random Forest,1.0
-Kids,Neural Network,1.0
